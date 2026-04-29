@@ -5,7 +5,7 @@ AS
 BEGIN
     OPEN p_results FOR
         SELECT MovieID, Title, Genre, ReleaseYear, AvgRating
-        FROM Movies
+        FROM APP_Movies
         WHERE UPPER(Title) LIKE UPPER('%' || p_keyword || '%');
 END;
 /
@@ -22,7 +22,7 @@ AS
 BEGIN
     SELECT Title, Genre, Description, ReleaseYear, AvgRating
     INTO p_Title, p_Genre, p_Desc, p_Year, p_Rating
-    FROM Movies
+    FROM APP_Movies
     WHERE MovieID = p_MID;
 END;
 /
@@ -34,59 +34,59 @@ AS
 BEGIN
     OPEN p_ReviewList FOR
         SELECT U.Username, R.ReviewText
-        FROM Reviews R
-        JOIN Users U ON R.UserID = U.UserID
+        FROM APP_Reviews R
+        JOIN APP_Users U ON R.UserID = U.UserID
         WHERE R.MovieID = p_MID;
 END;
 /
 
--- PROCEDURE 4: Get Max RatingID
+-- PROCEDURE 4: Get Max RatingID (kept as requested)
 CREATE OR REPLACE PROCEDURE APP_GetMaxRatingID
     (p_RID OUT NUMBER)
 AS
 BEGIN
     SELECT NVL(MAX(RatingID), 0)
     INTO p_RID
-    FROM Ratings;
+    FROM APP_Ratings;
 END;
 /
 
--- PROCEDURE 5: Get Max ReviewID
+-- PROCEDURE 5: Get Max ReviewID (kept as requested)
 CREATE OR REPLACE PROCEDURE APP_GetMaxReviewID
     (p_RID OUT NUMBER)
 AS
 BEGIN
     SELECT NVL(MAX(ReviewID), 0)
     INTO p_RID
-    FROM Reviews;
+    FROM APP_Reviews;
 END;
 /
 
--- PROCEDURE 6: Insert Rating
+-- PROCEDURE 6: Insert Rating (FIXED - no ID)
 CREATE OR REPLACE PROCEDURE APP_InsertRating
-    (p_RID NUMBER, p_UID NUMBER, p_MID NUMBER, p_RVal NUMBER)
+    (p_UID NUMBER, p_MID NUMBER, p_RVal NUMBER)
 AS
 BEGIN
-    INSERT INTO Ratings (RatingID, UserID, MovieID, RatingValue)
-    VALUES (p_RID, p_UID, p_MID, p_RVal);
+    INSERT INTO APP_Ratings (UserID, MovieID, RatingValue)
+    VALUES (p_UID, p_MID, p_RVal);
 
-    UPDATE Movies
+    UPDATE APP_Movies
     SET AvgRating = (
         SELECT AVG(RatingValue)
-        FROM Ratings
+        FROM APP_Ratings
         WHERE MovieID = p_MID
     )
     WHERE MovieID = p_MID;
 END;
 /
 
--- PROCEDURE 7: Insert Review
+-- PROCEDURE 7: Insert Review (FIXED - no ID)
 CREATE OR REPLACE PROCEDURE APP_InsertReview
-    (p_RID NUMBER, p_UID NUMBER, p_MID NUMBER, p_Text VARCHAR2)
+    (p_UID NUMBER, p_MID NUMBER, p_Text VARCHAR2)
 AS
 BEGIN
-    INSERT INTO Reviews (ReviewID, UserID, MovieID, ReviewText)
-    VALUES (p_RID, p_UID, p_MID, p_Text);
+    INSERT INTO APP_Reviews (UserID, MovieID, ReviewText)
+    VALUES (p_UID, p_MID, p_Text);
 END;
 /
 
@@ -97,9 +97,8 @@ AS
 BEGIN
     OPEN p_MovieList FOR
         SELECT MovieID, Title, Genre, ReleaseYear, AvgRating
-        FROM Movies
+        FROM APP_Movies
         ORDER BY AvgRating DESC;
 END;
 /
-
 COMMIT;
