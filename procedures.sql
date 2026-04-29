@@ -62,13 +62,13 @@ BEGIN
 END;
 /
 
--- PROCEDURE 6: Insert Rating (FIXED - no ID)
+-- PROCEDURE 6: Insert Rating 
 CREATE OR REPLACE PROCEDURE APP_InsertRating
-    (p_UID NUMBER, p_MID NUMBER, p_RVal NUMBER)
+    (p_RID NUMBER, p_UID NUMBER, p_MID NUMBER, p_RVal NUMBER)
 AS
 BEGIN
-    INSERT INTO APP_Ratings (UserID, MovieID, RatingValue)
-    VALUES (p_UID, p_MID, p_RVal);
+    INSERT INTO APP_Ratings (RatingID, UserID, MovieID, RatingValue)
+    VALUES (p_RID, p_UID, p_MID, p_RVal);
 
     UPDATE APP_Movies
     SET AvgRating = (
@@ -80,13 +80,13 @@ BEGIN
 END;
 /
 
--- PROCEDURE 7: Insert Review (FIXED - no ID)
+-- PROCEDURE 7: Insert Review 
 CREATE OR REPLACE PROCEDURE APP_InsertReview
-    (p_UID NUMBER, p_MID NUMBER, p_Text VARCHAR2)
+    (p_RID NUMBER, p_UID NUMBER, p_MID NUMBER, p_Text VARCHAR2)
 AS
 BEGIN
-    INSERT INTO APP_Reviews (UserID, MovieID, ReviewText)
-    VALUES (p_UID, p_MID, p_Text);
+    INSERT INTO APP_Reviews (ReviewID, UserID, MovieID, ReviewText)
+    VALUES (p_RID, p_UID, p_MID, p_Text);
 END;
 /
 
